@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordenação de Números</title>
+    <!-- Adicionando o link para o Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Ordenação de Números</h1>
+        <div class="form-group">
+            <label for="numeroInput">Digite um número:</label>
+            <input type="number" class="form-control" id="numeroInput">
+        </div>
+        <button type="button" class="btn btn-primary" onclick="add()">Adicionar</button>
+        <button type="button" class="btn btn-success" onclick="ordenar()">Ordenar</button>
+        <button type="button" class="btn btn-warning" onclick="misturar()">Misturar</button>
+        <div class="form-group mt-3">
+            <label for="modoSelect">Selecione o modo de ordenação:</label>
+            <select class="form-control" id="modoSelect">
+                <option value="bubble_sort">Bubble Sort</option>
+                <option value="selection_sort">Selection Sort</option>
+                <option value="quick_sort">Quick Sort</option>
+            </select>
+        </div>
+        <ul class="list-group mt-3" id="valores">
+            <!-- Aqui os números serão adicionados dinamicamente -->
+        </ul>
+    </div>
+
+    <!-- Adicionando o link para o Bootstrap JavaScript e o jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        const valores = [];
+
+        function add() {
+            const numeroInput = document.getElementById("numeroInput");
+            const numero = Number(numeroInput.value);
+
+            if (!isNaN(numero)) {
+                valores.push(numero);
+                numeroInput.value = "";
+                atualizarLista();
+            }
+        }
+
+        function atualizarLista() {
+            const valoresLista = document.getElementById("valores");
+            valoresLista.innerHTML = valores.map(numero => `<li class="list-group-item">${numero}</li>`).join("");
+        }
+
+        function swap(arr, index1, index2) {
+            [arr[index1], arr[index2]] = [arr[index2], arr[index1]];
+        }
+
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                swap(arr, i, j);
+            }
+        }
+
+        function ordenar() {
+            const modoSelect = document.getElementById("modoSelect");
+            const modo = modoSelect.value;
+
+            if (modo === "bubble_sort") {
+                bubble_sort(valores);
+            } else if (modo === "selection_sort") {
+                selection_sort(valores);
+            } else if (modo === "quick_sort") {
+                quick_sort(valores, 0, valores.length - 1);
+            }
+
+            atualizarLista();
+        }
+
+        function bubble_sort(arr) {
+            const n = arr.length;
+            let swapped;
+
+            do {
+                swapped = false;
+                for (let i = 0; i < n - 1; i++) {
+                    if (arr[i] > arr[i + 1]) {
+                        swap(arr, i, i + 1);
+                        swapped = true;
+                    }
+                }
+                n--;
+            } while (swapped);
+        }
+
+        function selection_sort(arr) {
+            const n = arr.length;
+
+            for (let i = 0; i < n - 1; i++) {
+                let minIndex = i;
+                for (let j = i + 1; j < n; j++) {
+                    if (arr[j] < arr[minIndex]) {
+                        minIndex = j;
+                    }
+                }
+                if (minIndex !== i) {
+                    swap(arr, i, minIndex);
+                }
+            }
+        }
+
+        function quick_sort(arr, start, end) {
+            if (start >= end) return;
+
+            const pivotIndex = partition(arr, start, end);
+            quick_sort(arr, start, pivotIndex - 1);
+            quick_sort(arr, pivotIndex + 1, end);
+        }
+
+        function partition(arr, start, end) {
+            const pivot = arr[end];
+            let i = start - 1;
+
+            for (let j = start; j < end; j++) {
+                if (arr[j] < pivot) {
+                    i++;
+                    swap(arr, i, j);
+                }
+            }
+            swap(arr, i + 1, end);
+            return i + 1;
+        }
+
+        function misturar() {
+            shuffle(valores);
+            atualizarLista();
+        }
+    </script>
+</body>
+
+</html>
